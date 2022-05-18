@@ -1,0 +1,12 @@
+{
+  "Rmax": 2,
+  "Rmin": 1,
+
+  "Zmax": 2,
+  "Zmin": 1,
+
+  "Rpoint":6,
+  "Zpoint":6,
+  "DischargeRatioR" : 1,
+  "DischargeRatioZ" : 1
+}
