@@ -17,16 +17,16 @@ public class Slae
         B = b;
     }
 
-    public Slae(Area area, Grid grid)
+    public Slae(Area area, Grid grid, int func)
     {
         Q = new double[(2 * area.Rpoint - 1) * (2 * area.Zpoint - 1)];
         Q.AsSpan().Fill(1);
         A = new Matrix();
         Matrix.Profile(area, grid, A);
-        GlobalBuild(area, grid, ref A, ref B);
+        GlobalBuild(area, grid, ref A, ref B, func);
     }
 
-    public Slae(Area area, Initial initial, Grid grid, TimeGrid timeGrid, double time)
+    public Slae(Area area, Initial initial, Grid grid, TimeGrid timeGrid, double time, int func)
     {
         Qn = new double[initial.TimePoint][];
         for (int i = 0; i < initial.TimePoint; i++)
@@ -43,7 +43,7 @@ public class Slae
         GlobalM.Ig = A.Ig;
         GlobalG.Jg = A.Jg;
         GlobalM.Jg = A.Jg;
-        GlobalBildAll(area, grid, ref A, ref GlobalG, ref GlobalM, ref GlobalB, time);
+        GlobalBildAll(area, grid, ref A, ref GlobalG, ref GlobalM, ref GlobalB, time, func);
         B = new double[(2 * area.Rpoint - 1) * (2 * area.Zpoint - 1)];
         GlobalB.AsSpan().CopyTo(B);
         var k = 0;
@@ -51,14 +51,14 @@ public class Slae
         {
             foreach (var r in grid.R)
             {
-                var realf = Func.RealF(r, z, time);
-                Qn[0][k] = Func.RealF(r, z, timeGrid.TimeNode[0]);
+                var realf = Func.RealF(r, z, time,func);
+                Qn[0][k] = Func.RealF(r, z, timeGrid.TimeNode[0],func);
                 k++;
             }
         }
     }
 
-    public Slae(Area area, Initial initial, Grid grid, TimeGrid timeGrid, double time, string str)
+    public Slae(Area area, Initial initial, Grid grid, TimeGrid timeGrid, double time, int func, string str)
     {
         Qn = new double[initial.TimePoint][];
         for (int i = 0; i < initial.TimePoint; i++)
@@ -75,7 +75,7 @@ public class Slae
         GlobalM.Ig = A.Ig;
         GlobalG.Jg = A.Jg;
         GlobalM.Jg = A.Jg;
-        GlobalBildAll(area, grid, ref A, ref GlobalG, ref GlobalM, ref GlobalB, time);
+        GlobalBildAll(area, grid, ref A, ref GlobalG, ref GlobalM, ref GlobalB, time, func);
         B = new double[(2 * area.Rpoint - 1) * (2 * area.Zpoint - 1)];
         GlobalB.AsSpan().CopyTo(B);
         var k = 0;
@@ -83,16 +83,16 @@ public class Slae
         {
             foreach (var r in grid.R)
             {
-                Qn[0][k] = Func.RealF(r, z, timeGrid.TimeNode[0]);
-                Qn[1][k] = Func.RealF(r, z, timeGrid.TimeNode[1]);
-                Qn[2][k] = Func.RealF(r, z, timeGrid.TimeNode[2]);
+                Qn[0][k] = Func.RealF(r, z, timeGrid.TimeNode[0],func);
+                Qn[1][k] = Func.RealF(r, z, timeGrid.TimeNode[1],func);
+                Qn[2][k] = Func.RealF(r, z, timeGrid.TimeNode[2],func);
                 k++;
             }
         }
     }
 
     private void GlobalBildAll(Area area, Grid grid, ref Matrix A, ref Matrix g, ref Matrix m, ref double[]? B,
-        double time)
+        double time,int func)
     {
         double sigma = 0;
         var locB = new double[9];
@@ -118,7 +118,7 @@ public class Slae
             var hr = grid.Node[grid.ElPints[1][i][1]][0] - rk;
             var hz = grid.Node[grid.ElPints[1][i][2]][1] - grid.Node[grid.ElPints[1][i][0]][1];
             loc_build(rk, hr, hz, ref locMass, ref locStiffness);
-            loc_f(ref locB, i, grid, time);
+            loc_f(ref locB, i, grid, time,func);
             m_mult_v(ref locB, locMass);
             for (int k = 0; k < 9; k++)
             {
@@ -155,7 +155,28 @@ public class Slae
         m.Al.AsSpan().CopyTo(m.Au);
     }
 
-    public static void GlobalBuild(Area area, Grid grid, ref Matrix matrix, ref double[] b)
+    public static void GlobalBildB(Area area, Grid grid,Slae slae, ref double[]? B,
+        double time,int func)
+    {
+        var bCopy = new double[(2 * area.Rpoint - 1) * (2 * area.Zpoint - 1)];
+        var f = new double[(2 * area.Rpoint - 1) * (2 * area.Zpoint - 1)];
+
+        var k = 0;
+        foreach (var z in grid.Z)
+        {
+            foreach (var r in grid.R)
+            {
+                f[k] = Func.F(r,z,time, func);
+                k++;
+            }
+        }
+
+        bCopy = Matrix.Mult(slae.GlobalM, f);
+
+        B = bCopy;
+    }
+
+    public static void GlobalBuild(Area area, Grid grid, ref Matrix matrix, ref double[] b, int func)
     {
         double gamma = 0;
         var locB = new double[9];
@@ -175,7 +196,7 @@ public class Slae
             var hz = grid.Node[grid.ElPints[1][i][2]][1] - grid.Node[grid.ElPints[1][i][0]][1];
             loc_build(rk, hr, hz, ref locMass, ref locStiffness);
             loc_gamma(i, ref gamma, grid, 0);
-            loc_f(ref locB, i, grid, 0);
+            loc_f(ref locB, i, grid, 0, func);
             m_mult_v(ref locB, locMass);
             for (int k = 0; k < 9; k++)
             {
@@ -251,7 +272,7 @@ public class Slae
         f = res;
     }
 
-    private static void loc_f(ref double[] LocB, int num, Grid grid, double time)
+    private static void loc_f(ref double[] LocB, int num, Grid grid, double time,int func)
     {
         double hr, hz;
         hr = (grid.Node[grid.ElPints[1][num][1]][0] - grid.Node[grid.ElPints[1][num][0]][0]) / 2.0;
@@ -260,7 +281,7 @@ public class Slae
         for (int i = 0; i < 9; i++)
         {
             res[i] = Func.F(grid.Node[grid.ElPints[1][num][0]][0] + hr * (i % 3),
-                grid.Node[grid.ElPints[1][num][0]][1] + hz * (i / 3), time);
+                grid.Node[grid.ElPints[1][num][0]][1] + hz * (i / 3), time,func);
         }
 
         LocB = res;
@@ -298,7 +319,7 @@ public class Slae
         gamma = g / 9.0;
     }
 
-    private static void  loc_build(double rk, double hr, double hz, ref double[][] LocMass,
+    private static void loc_build(double rk, double hr, double hz, ref double[][] LocMass,
         ref double[][][] locStiffness)
     {
         var locMOld = new double[3][][];
@@ -622,6 +643,7 @@ public class Slae
                 z[i] = ur[i] + betta * z[i];
                 p[i] = buf[i] + betta * p[i];
             }
+
             k++;
         }
 

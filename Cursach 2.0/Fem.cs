@@ -6,7 +6,7 @@ public class Fem
     public Slae Slae;
     public TimeGrid TimeGrid { get; }
 
-    public Fem(Area area, BoundaryData boundary, Initial initial, bool isTimeShem, double time)
+    public Fem(Area area, BoundaryData boundary, Initial initial, bool isTimeShem, double time, int func, string str)
     {
         Grid = new Grid(area);
         if (isTimeShem)
@@ -14,9 +14,9 @@ public class Fem
             TimeGrid = new TimeGrid(initial);
         }
 
-        Slae = new Slae(area, initial, Grid, TimeGrid, time);
+        Slae = new Slae(area, initial, Grid, TimeGrid, time,func, str);
     }
-    public Fem(Area area, BoundaryData boundary, Initial initial, bool isTimeShem, double time, string str)
+    public Fem(Area area, BoundaryData boundary, Initial initial, bool isTimeShem, double time, int func)
     {
         Grid = new Grid(area);
         if (isTimeShem)
@@ -24,11 +24,11 @@ public class Fem
             TimeGrid = new TimeGrid(initial);
         }
 
-        Slae = new Slae(area, initial, Grid, TimeGrid, time, str);
+        Slae = new Slae(area, initial, Grid, TimeGrid, time, func);
     }
-    public Fem(Area area, BoundaryData boundary)
+    public Fem(Area area, BoundaryData boundary, int func)
     {
         Grid = new Grid(area);
-        Slae = new Slae(area, Grid);
+        Slae = new Slae(area, Grid, func);
     }
 }

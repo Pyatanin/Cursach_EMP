@@ -187,7 +187,7 @@ public static class Boundary
         }
     }
 
-    public static void One(Area area, Grid grid, BoundaryData boundary, ref Slae slae, double time)
+    public static void One(Area area, Grid grid, BoundaryData boundary, ref Slae slae, double time, int func)
     {
         foreach (var border in boundary.OneBorder)
         {
@@ -204,7 +204,7 @@ public static class Boundary
                         for (int j = 0; j < 3; j++)
                         {
                             Ugi = Func.Ug(grid.Node[grid.ElPints[1][num][0]][0],
-                                grid.Node[grid.ElPints[1][num][0]][1] + h * j, time, border);
+                                grid.Node[grid.ElPints[1][num][0]][1] + h * j, time, border, func);
                             del_str(grid.ElPints[0][num][3 * j], Ugi, area, ref slae.A);
                             slae.A.Di[grid.ElPints[0][num][3 * j]] = 1.0;
                             slae.B[grid.ElPints[0][num][3 * j]] = Ugi;
@@ -224,7 +224,7 @@ public static class Boundary
                         for (int j = 0; j < 3; j++)
                         {
                             Ugi = Func.Ug(grid.Node[grid.ElPints[1][num][0]][0] + h * j,
-                                grid.Node[grid.ElPints[1][num][0]][1], time, border);
+                                grid.Node[grid.ElPints[1][num][0]][1], time, border, func);
                             del_str(grid.ElPints[0][num][j], Ugi, area, ref slae.A);
                             slae.B[grid.ElPints[0][num][j]] = Ugi;
                             slae.A.Di[grid.ElPints[0][num][j]] = 1.0;
@@ -244,7 +244,7 @@ public static class Boundary
                         for (int j = 0; j < 3; j++)
                         {
                             Ugi = Func.Ug(grid.Node[grid.ElPints[1][num][1]][0],
-                                grid.Node[grid.ElPints[1][num][1]][1] + h * j, time, border);
+                                grid.Node[grid.ElPints[1][num][1]][1] + h * j, time, border, func);
                             del_str(grid.ElPints[0][num][3 * j + 2], Ugi, area, ref slae.A);
                             slae.B[grid.ElPints[0][num][3 * j + 2]] = Ugi;
                             slae.A.Di[grid.ElPints[0][num][3 * j + 2]] = 1.0;
@@ -264,7 +264,7 @@ public static class Boundary
                         for (int j = 0; j < 3; j++)
                         {
                             Ugi = Func.Ug(grid.Node[grid.ElPints[1][num][2]][0] + h * j,
-                                grid.Node[grid.ElPints[1][num][2]][1], time, border);
+                                grid.Node[grid.ElPints[1][num][2]][1], time, border, func);
                             del_str(grid.ElPints[0][num][6 + j], Ugi, area, ref slae.A);
                             slae.B[grid.ElPints[0][num][6 + j]] = Ugi;
                             slae.A.Di[grid.ElPints[0][num][6 + j]] = 1.0;

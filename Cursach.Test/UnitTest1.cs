@@ -19,8 +19,8 @@ public class Tests
         var initial =
             JsonSerializer.Deserialize<Initial>(
                 File.ReadAllText("D:/Программы/Cursach 2.0/Cursach 2.0/bin/Debug/net6.0/Data/Initial.json"))!;
-        var fem = new Fem(area, boundary);
-        var femTest = new Fem(area, boundary, initial, true,0);
+        var fem = new Fem(area, boundary, 1);
+        var femTest = new Fem(area, boundary, initial, true,0,1);
 
         var expected = fem.Slae;
         var result = femTest.Slae;
@@ -226,7 +226,7 @@ public class Tests
         var initial =
             JsonSerializer.Deserialize<Initial>(
                 File.ReadAllText("D:/Программы/Cursach 2.0/Cursach 2.0/bin/Debug/net6.0/Data/Initial.json"))!;
-        var fem = new Fem(area, boundary);
+        var fem = new Fem(area, boundary, 1);
 
         var result = fem.Slae;
 
@@ -437,10 +437,10 @@ public class Tests
         var initial =
             JsonSerializer.Deserialize<Initial>(
                 File.ReadAllText("D:/Программы/Cursach 2.0/Cursach 2.0/bin/Debug/net6.0/Data/Initial.json"))!;
-        var fem = new Fem(area, boundary);
+        var fem = new Fem(area, boundary, 1);
         Boundary.Two(area, fem.Grid, boundary, ref fem.Slae, 0);
         Boundary.Three(area, fem.Grid, boundary, ref fem.Slae, 0);
-        Boundary.One(area, fem.Grid, boundary, ref fem.Slae, 0);
+        Boundary.One(area, fem.Grid, boundary, ref fem.Slae, 0, 1);
 
         var result = fem.Slae;
 
@@ -626,10 +626,10 @@ public class Tests
         var initial =
             JsonSerializer.Deserialize<Initial>(
                 File.ReadAllText("D:/Программы/Cursach 2.0/Cursach 2.0/bin/Debug/net6.0/Data/Initial.json"))!;
-        var fem = new Fem(area, boundary);
+        var fem = new Fem(area, boundary,1);
         Boundary.Two(area, fem.Grid, boundary, ref fem.Slae, 0);
         Boundary.Three(area, fem.Grid, boundary, ref fem.Slae, 0);
-        Boundary.One(area, fem.Grid, boundary, ref fem.Slae, 0);
+        Boundary.One(area, fem.Grid, boundary, ref fem.Slae, 0,1);
         var Fac = new double[3][];
         Fac[0] = new double[fem.Slae.A.Di.Length];
         Fac[1] = new double[fem.Slae.A.Al.Length];
@@ -839,10 +839,10 @@ public class Tests
         var initial =
             JsonSerializer.Deserialize<Initial>(
                 File.ReadAllText("D:/Программы/Cursach 2.0/Cursach 2.0/bin/Debug/net6.0/Data/Initial.json"))!;
-        var fem = new Fem(area, boundary);
+        var fem = new Fem(area, boundary,1);
         Boundary.Two(area, fem.Grid, boundary, ref fem.Slae, 0);
         Boundary.Three(area, fem.Grid, boundary, ref fem.Slae, 0);
-        Boundary.One(area, fem.Grid, boundary, ref fem.Slae, 0);
+        Boundary.One(area, fem.Grid, boundary, ref fem.Slae, 0,1);
         var Fac = new double[3][];
         Fac[0] = new double[fem.Slae.A.Di.Length];
         Fac[1] = new double[fem.Slae.A.Al.Length];
